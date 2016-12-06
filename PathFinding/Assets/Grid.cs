@@ -65,17 +65,29 @@ public class Grid : MonoBehaviour {
 	}
 
 	public List<Node> path;
+	public List<Node> OpenPath;
+	public HashSet<Node> ClosePath;
+	public Node minNode;
 	void OnDrawGizmos() {
 		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
 
 		if (grid != null) {
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable)?Color.white:Color.red;
-				if (path != null)
-				if (path.Contains(n))
-					Gizmos.color = Color.cyan;
+				if (null != OpenPath && OpenPath.Contains(n))
+					Gizmos.color = Color.green;
+				if (null != ClosePath && ClosePath.Contains(n))
+					Gizmos.color = Color.yellow;
+				if (path != null) {
+					if (null != path && path.Contains (n))
+						Gizmos.color = Color.cyan;
+				}
+				if (null != minNode && n == minNode)
+					Gizmos.color = Color.magenta;
 				Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-.1f));
+
 			}
 		}
 	}
+
 }
