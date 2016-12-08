@@ -8,6 +8,7 @@ public class PathFinding : MonoBehaviour {
 	Grid grid;
 	bool isLooped = true;
 	int count = 1;
+	private int algomode = 0;
 	void Awake() {
 		grid = GetComponent<Grid> ();
 	}
@@ -22,7 +23,29 @@ public class PathFinding : MonoBehaviour {
 		}
 		if (Input.GetButtonDown ("Fire1")) {
 			count--;
+			count = Mathf.Max (count, 0);
 			Debug.Log ("Number of Loop =" + count);
+		}
+		if (Input.GetKeyDown (KeyCode.A)) {
+			count+=10;
+			Debug.Log ("Number of Loop =" + count);
+		}
+		if (Input.GetKeyDown (KeyCode.S)) {
+			count-=10;
+			count = Mathf.Max (count, 0);
+			Debug.Log ("Number of Loop =" + count);
+		}
+		if (Input.GetKeyDown (KeyCode.R)) {
+			count = 1;
+			Debug.Log ("Number of Loop =" + count);
+		}
+		if (Input.GetKeyDown (KeyCode.Q)) {
+			algomode = 0;
+			Debug.Log ("Use A* Algorithm" );
+		}
+		else if (Input.GetKeyDown (KeyCode.W)) {
+			algomode = 1;
+			Debug.Log ("Use Uniform Cost Search Algorithm" );
 		}
 		FindPath(seeker.position, target.position);
 	}
@@ -39,16 +62,24 @@ public class PathFinding : MonoBehaviour {
 		while (openSet.Count > 0 && k< count) {
 			Node node = openSet[0];
 			for (int i = 1; i < openSet.Count; i ++) {
-				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-					if (openSet[i].hCost < node.hCost)
-						node = openSet[i];
-				}
-				// Heristic Cost Search
+//				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
+//					if (openSet[i].hCost < node.hCost)
+//						node = openSet[i];
+//				}
+				// Uniform cost Search
 				/*if (openSet[i].gCost < node.gCost )
 					node = openSet[i];*/
-				// Breath First Search
+				// Heuristic Search
 				/*if (openSet[i].hCost < node.hCost)
 					node = openSet[i];*/
+				if (algomode == 0) {
+					if (openSet [i].fCost < node.fCost) {
+						node = openSet [i];
+					}	
+				}
+				else if (openSet[i].gCost < node.gCost) {
+					node = openSet[i];
+				}
 			}
 		
 			openSet.Remove(node);
@@ -80,11 +111,20 @@ public class PathFinding : MonoBehaviour {
 			k++;
 			grid.minNode = openSet[0];
 			for (int i = 1; i < openSet.Count; i ++) {
-				if (openSet[i].fCost < grid.minNode.fCost || openSet[i].fCost == grid.minNode.fCost) {
-					if (openSet[i].hCost < grid.minNode.hCost)
-						grid.minNode = openSet[i];
+//				if (openSet[i].fCost < grid.minNode.fCost || openSet[i].fCost == grid.minNode.fCost) {
+//					if (openSet[i].hCost < grid.minNode.hCost)
+//						grid.minNode = openSet[i];
+//				}
+				if (algomode == 0) {
+					if (openSet [i].fCost < grid.minNode.fCost) {
+						grid.minNode = openSet [i];
+					}	
+				}
+				else if (openSet[i].gCost < grid.minNode.gCost) {
+					grid.minNode = openSet[i];
 				}
 			}
+
 		}
 	}
 
